@@ -1,16 +1,16 @@
-# Noctalia Shell
+# driftwm-noctalia
 
-**_quiet by design_**
+**_Noctalia Shell — adapted for driftwm infinite canvas_**
 
 <p align="center">
   <img src="https://assets.noctalia.dev/noctalia-logo.svg?v=2" alt="Noctalia Logo" style="width: 192px" />
 </p>
 
 <p align="center">
-  <a href="https://docs.noctalia.dev/getting-started/installation">
+  <a href="https://github.com/youssefvdel/driftwm-noctalia">
     <img
-      src="https://img.shields.io/badge/🌙_Install_Noctalia-A8AEFF?style=for-the-badge&labelColor=0C0D11"
-      alt="Install Noctalia"
+      src="https://img.shields.io/badge/🌙_driftwm--noctalia-A8AEFF?style=for-the-badge&labelColor=0C0D11"
+      alt="driftwm-noctalia"
       style="height: 50px"
     />
   </a>
@@ -19,171 +19,102 @@
 <p><br/></p>
 
 <p align="center">
-  <a href="https://github.com/noctalia-dev/noctalia-shell/commits">
-    <img src="https://img.shields.io/github/last-commit/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=git&logoColor=FFFFFF&label=commit" alt="Last commit" />
+  <a href="https://github.com/youssefvdel/driftwm-noctalia/commits">
+    <img src="https://img.shields.io/github/last-commit/youssefvdel/driftwm-noctalia?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=git&logoColor=FFFFFF&label=commit" alt="Last commit" />
   </a>
-  <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
-    <img src="https://img.shields.io/github/stars/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=github&logoColor=FFFFFF" alt="GitHub stars" />
-  </a>
-  <a href="https://docs.noctalia.dev">
-    <img src="https://img.shields.io/badge/docs-A8AEFF?style=for-the-badge&logo=gitbook&logoColor=FFFFFF&labelColor=0C0D11" alt="Documentation" />
-  </a>
-  <a href="https://discord.noctalia.dev">
-    <img src="https://img.shields.io/badge/discord-A8AEFF?style=for-the-badge&labelColor=0C0D11&logo=discord&logoColor=FFFFFF" alt="Discord" />
+  <a href="https://github.com/youssefvdel/driftwm-noctalia">
+    <img src="https://img.shields.io/badge/driftwm_compatible-A8AEFF?style=for-the-badge&labelColor=0C0D11&logo=wayland&logoColor=FFFFFF" alt="driftwm compatible" />
   </a>
 </p>
 
 ---
 
-## What is Noctalia?
+## What is this?
 
-A beautiful, minimal desktop shell for Wayland that actually gets out of your way. Built on [Quickshell](https://quickshell.outfoxxed.me/) (Qt/QML) with a warm lavender aesthetic that you can easily customize to match your vibe.
+A fork of [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell) adapted to work natively with [driftwm](https://github.com/malbiruk/driftwm) — a trackpad-first infinite canvas Wayland compositor.
 
-**✨ Key Features:**
-- 🪟 Native support for Niri, Hyprland, Sway, Scroll, Labwc and MangoWC
-- 🎨 Extensive theming with predefined color schemes and automatic color generation from your wallpaper
-- 🖼️ Wallpaper management with Wallhaven integration
-- 🔔 Notification system with history and Do Not Disturb
-- 🖥️ Multi-monitor support
-- 🔒 Lock screen
-- 🧩 Desktop widgets (clock, media player and more)
-- 💡 OSD for volume and brightness
-- 🔌 Nearly 100 plugins available ([explore plugins](https://noctalia.dev/plugins/))
-- 🪄 Setup wizard for first-time users
-- ⚡ Built on Quickshell for performance
+**Key differences from upstream Noctalia:**
 
----
+- **No workspaces** — driftwm uses an infinite 2D canvas instead of workspaces. A single synthetic "Canvas" workspace replaces the workspace model.
+- **Bar clickability fix** — bar uses `WlrLayer.Overlay` + `keyboardFocus: OnDemand` on driftwm so it sits above the MainScreen mask.
+- **Blur auto-disabled** — driftwm doesn't support `ext-background-effect-v1`, so blur is automatically disabled.
+- **Canvas state polling** — reads `$XDG_RUNTIME_DIR/driftwm/state` for viewport position, zoom, and window/layer lists.
+- **Auto-detection** — detects driftwm via `XDG_CURRENT_DESKTOP=driftwm` at startup.
 
-## Preview
+## Supported Compositors
 
-https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
+| Compositor | Status |
+|---|---|
+| **driftwm** | Native (this fork) |
+| Hyprland | Inherited from upstream |
+| Niri | Inherited from upstream |
+| Sway / Scroll | Inherited from upstream |
+| Labwc | Inherited from upstream |
+| MangoWC | Inherited from upstream |
 
-<details>
-<summary>Screenshots</summary>
+## driftwm Setup
 
-![Dark 1](/Assets/Screenshots/noctalia-dark-1.png)
-![Dark 2](/Assets/Screenshots/noctalia-dark-2.png)
-![Dark 3](/Assets/Screenshots/noctalia-dark-3.png)
+### 1. Install noctalia-qs
 
-![Light 1](/Assets/Screenshots/noctalia-light-1.png)
-![Light 2](/Assets/Screenshots/noctalia-light-2.png)
-![Light 3](/Assets/Screenshots/noctalia-light-3.png)
+Build the Quickshell fork from source:
 
-</details>
+```bash
+git clone --depth 1 https://github.com/noctalia-dev/noctalia-qs.git ~/builds/noctalia-qs
+cd ~/builds/noctalia-qs
+cmake -GNinja -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake --build build
+sudo cmake --install build
+```
 
----
+### 2. Clone this repo
 
-## 📋 Requirements
+```bash
+mkdir -p ~/.config/quickshell
+git clone https://github.com/youssefvdel/driftwm-noctalia.git ~/.config/quickshell/noctalia-shell
+```
 
-- Wayland compositor (see supported compositors below)
-- Quickshell: [noctalia-qs](https://github.com/noctalia-dev/noctalia-qs)
-- Additional dependencies are listed in our [documentation](https://docs.noctalia.dev)
+### 3. driftwm config (`~/.config/driftwm/config.toml`)
 
----
+```toml
+autostart = ["qs -c noctalia-shell"]
 
-## 🚀 Getting Started
+[keybindings]
+"mod+d" = "spawn qs ipc -c noctalia-shell call launcher toggle"
+"mod+n" = "spawn qs ipc -c noctalia-shell call notifications toggleHistory"
+"mod+v" = "spawn qs ipc -c noctalia-shell call launcher clipboard"
+```
 
-**New to Noctalia?**
-Check out our comprehensive documentation and installation guide to get up and running!
+### 4. Noctalia settings (`~/.config/noctalia/settings.json`)
 
-<p align="center">
-  <a href="https://docs.noctalia.dev/getting-started/installation">
-    <img src="https://img.shields.io/badge/📖_Installation_Guide-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Installation Guide" />
-  </a>
-  <a href="https://docs.noctalia.dev/getting-started/faq/">
-    <img src="https://img.shields.io/badge/❓_FAQ-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="FAQ" />
-  </a>
-  <a href="https://discord.noctalia.dev">
-    <img src="https://img.shields.io/badge/💬_Get_Help-A8AEFF?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0C0D11" alt="Discord" />
-  </a>
-</p>
+```json
+{
+  "wallpaper": { "enabled": false },
+  "general": { "enableBlurBehind": false },
+  "desktopWidgets": { "overviewEnabled": false },
+  "notifications": { "overlayLayer": false },
+  "osd": { "overlayLayer": false }
+}
+```
 
----
+Wallpaper must be disabled — driftwm handles its own background via shaders.
 
-## 🖥️ Wayland Compositors
+### 5. IPC Commands
 
-Noctalia provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
-
----
-
-## Scope
-
-Noctalia is a **desktop shell**, not a full desktop environment. It provides the visual layer that sits on top of your Wayland compositor (bars, panels, notifications, a dock, and widgets) but it intentionally stays within that boundary. Understanding this helps set the right expectations for feature requests.
-
-### What Noctalia does
-
-Noctalia focuses on the things a shell is responsible for: status bar, panels, application launcher, notifications, lock screen, idle management, OSD, theming, wallpapers, desktop widgets, dock, and multi-monitor support.
-
-### What belongs in a plugin
-
-If a feature is useful to some users but not essential to the core shell experience, it's a great candidate for a [plugin](https://noctalia.dev/plugins/). The plugin system is designed to make this easy: plugins can add bar widgets, panels, launcher providers, desktop widgets, and more.
-
-Some examples of features that are better suited as plugins:
-- Compositor-specific extras (e.g., Steam overlay for Hyprland)
-- Hardware-specific controls (e.g., laptop fan profiles, battery thresholds)
-- Third-party service integrations (e.g., smart home controls, Tailscale)
-- Niche productivity tools (e.g., Pomodoro timer, RSS reader, Docker manager)
-- Alternative visualizations or widgets
-
-If you have an idea that fits this category, consider [building a plugin](https://docs.noctalia.dev/development/guideline) for it!
-
-### What falls outside our scope
-
-Some features go beyond what a desktop shell can or should do. These are typically responsibilities of the compositor, a dedicated application, or the system itself:
-
-- **File management**: use a file manager application
-- **Display/login greeter**: this runs before the shell and is managed separately
-- **Window management and overview**: workspace switching and window tiling are compositor responsibilities
-- **Removable drive mounting**: handled by system services like udisks and desktop applications
-- **Screen mirroring/casting**: managed by the compositor or dedicated tools
-
-We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Noctalia can provide. When in doubt, feel free to ask in our [Discord](https://discord.noctalia.dev).
+```bash
+qs ipc -c noctalia-shell call launcher toggle
+qs ipc -c noctalia-shell call notifications toggleHistory
+qs ipc -c noctalia-shell call controlCenter toggle
+qs ipc -c noctalia-shell call sessionMenu toggle
+qs ipc -c noctalia-shell call bar toggle
+qs ipc -c noctalia-shell show
+```
 
 ---
 
-## 🤝 Contributing
+## Upstream
 
-We welcome contributions of any size - bug fixes, new features, documentation improvements, or custom themes and configs.
+This is a fork of [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell) by [noctalia-dev](https://github.com/noctalia-dev). All credit for the original shell goes to the Noctalia team.
 
-**Get involved:**
-- **Found a bug?** [Open an issue](https://github.com/noctalia-dev/noctalia-shell/issues/new)
-- **Want to code?** Check out our [development guidelines](https://docs.noctalia.dev/development/guideline)
-- **Need help?** Join our [Discord](https://discord.noctalia.dev)
+## License
 
----
-
-## 💜 Credits
-
-A heartfelt thank you to our incredible community of [**contributors**](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors). We are immensely grateful for your dedicated participation and the constructive feedback you've provided, which continue to shape and improve our project for everyone.
-
----
-
-## ☕ Donations
-
-While all donations are greatly appreciated, they are completely voluntary.
-Thank you to everyone who supports the project! 💜
-
-<p>
-  <a href="https://www.buymeacoffee.com/noctalia">
-    <img src="https://img.shields.io/badge/Buy_Me_a_Coffee-A8AEFF?style=for-the-badge&logo=buymeacoffee&logoColor=FFFFFF&labelColor=0C0D11" alt="Buy Me a Coffee">
-  </a>
-  <a href="https://ko-fi.com/noctaliadev">
-    <img src="https://img.shields.io/badge/Ko--fi-A8AEFF?style=for-the-badge&logo=kofi&logoColor=FFFFFF&labelColor=0C0D11" alt="Ko-fi">
-  </a>
-</p>
-
----
-
-## 📄 License
-
-MIT License - see [LICENSE](./LICENSE) for details.
-
----
-
-## ⭐ Star History
-
-<p align="center">
-  <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
-    <img src="https://api.noctalia.dev/stars" alt="Star History" />
-  </a>
-</p>
+MIT License — see [LICENSE](./LICENSE) for details.
