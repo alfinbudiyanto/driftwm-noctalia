@@ -310,7 +310,11 @@ Item {
 
   function logout() {
     try {
-      Quickshell.execDetached(["sh", "-c", "kill -s SIGTERM $(pgrep driftwm) || loginctl terminate-session $XDG_SESSION_ID"]);
+      const runtimeDir = Quickshell.env("XDG_RUNTIME_DIR") || "/run/user/1000";
+      const socket = runtimeDir + "/driftwm/ipc.sock";
+      Quickshell.execDetached(["sh", "-c",
+        "echo quit | nc -U '" + socket.replace(/'/g, "'\\''") + "' 2>/dev/null || loginctl terminate-session $XDG_SESSION_ID"
+      ]);
     } catch (e) {
       Logger.e("DriftwmService", "Failed to logout:", e);
     }
